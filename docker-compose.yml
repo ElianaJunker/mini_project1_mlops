@@ -4,4 +4,4 @@ services:
     image: fastapi-house-price-app
     build: .
     ports:
-      - "8000:8000"
+      - "8005:8005"
