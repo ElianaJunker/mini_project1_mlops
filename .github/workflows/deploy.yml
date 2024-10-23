@@ -15,11 +15,9 @@ jobs:
       - name: Docker push
         run: docker push ${{ secrets.DOCKER_USERNAME }}/mini-projet-mlops
       - name: Deploy to Server
-        uses: appleboy/ssh-action@v0.1.8
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ubuntu
-          password: ${{ secrets.SSH_PASSWORD }}
-          script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/mini-projet-mlops && \
-            docker restart fastapi-house-price-app
+        run: |
+          sshpass -p "${{ secrets.SSH_PASSWORD }}" ssh -o StrictHostKeyChecking=no "${{ secrets.SSH_HOST }}" << 'EOF'
+            docker pull ${{ secrets.DOCKER_USERNAME }}/mini-projet-mlops
+            docker restart mini-projet-mlops
+          EOF
+            
