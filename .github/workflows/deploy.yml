@@ -20,4 +20,3 @@ jobs:
             docker pull ${{ secrets.DOCKER_USERNAME }}/mini-projet-mlops
             docker kill mini-projet-mlops; docker rm mini-projet-mlops; docker run -d --name mini-projet-mlops -p 8005:8005 ${{ secrets.DOCKER_USERNAME }}/mini-projet-mlops
           EOF
-            
