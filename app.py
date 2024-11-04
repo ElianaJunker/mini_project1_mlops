@@ -1,28 +1,27 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-import joblib
-import numpy as np
+from transformers import pipeline
 
 # Initialize FastAPI app
 app = FastAPI()
 
 # Load the trained model
-model = joblib.load('regression.joblib')
+model_name = "bhadresh-savani/distilbert-base-uncased-emotion"
+emotion_classifier = pipeline("text-classification", model=model_name)
 
-# Define a data model for input validation
-class HouseData(BaseModel):
-    size: float
-    bedrooms: int
-    garden: int
 
-# Define a predict endpoint
+# Data model for input validation
+class TextData(BaseModel):
+    text: str
+
+# Predict endpoint
 @app.post("/predict")
-def predict_price(data: HouseData):
-    # Prepare the input data for prediction
-    input_data = np.array([[data.size, data.bedrooms, data.garden]])
-    
-    # Make prediction
-    predicted_price = model.predict(input_data)[0]
-    
-    return {"predicted_price": predicted_price}
+def predict_toxicity(data: TextData):
+    results = emotion_classifier(data.text)
+
+    #Get the result of the prediction (label and score)
+    predicted_label = results[0]['label']
+    score = results[0]['score']
+
+    return {"predicted_label": predicted_label, "score": score}
 
